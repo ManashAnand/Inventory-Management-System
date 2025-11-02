@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simpler Stock Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #003200;
+            --secondary-color: #FFD700;
+            --third-color: #a2a2a2;
+            --background-color: #003200;
+            --text-color: #ffffff;
+            --border-radius: 5px;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: var(--text-color);
+        }
+
+        .footer {
+            color: var(--text-color);
+        }
+
+        .navbar-light {
+            background-color: var(--secondary-color) !important;
+            padding: 15px;
+            border-radius: var(--border-radius);
+        }
+
+        .navbar-light .navbar-brand,
+        .navbar-light .navbar-text,
+        .navbar-light .nav-link {
+            color: var(--primary-color) !important;
+        }
+
+        .btn {
+            font-weight: bolder !important;
+        }
+
+        .btn-outline-primary {
+            color: var(--secondary-color);
+            font-weight: bolder;
+            border-color: var(--secondary-color);
+            border-radius: var(--border-radius);
+        }
+
+        .btn-outline-primary:hover {
+            font-weight: bolder;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-warning {
+            font-weight: bolder;
+            background-color: var(--secondary-color);
+            border-color: var (--secondary-color);
+            color: var(--primary-color);
+            border-radius: var(--border-radius);
+        }
+
+        .btn-warning:hover {
+            font-weight: bolder;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        .btn-info {
+            font-weight: bolder;
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: var(--primary-color);
+            border-radius: var(--border-radius);
+        }
+
+        .btn-info:hover {
+            font-weight: bolder;
+            background-color: var(--text-color);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-warning#updateModeToggle:hover {
+            font-weight: bolder;
+            background-color: var(--text-color);
+            color: var(--primary-color);
+        }
+
+        .btn-primary {
+            font-weight: bolder;
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: var(--primary-color);
+            border-radius: var(--border-radius);
+        }
+
+        .btn-primary:hover {
+            font-weight: bolder;
+            background-color: var(--text-color);
+            border-color: var(--primary-color);
+            color: var(--primary-color) !important;
+        }
+
+        .btn-outline-primary#authLink {
+            font-weight: bolder;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            border-color: var(--primary-color);
+            border-radius: var(--border-radius);
+        }
+
+        .btn-outline-primary#authLink:hover {
+            font-weight: bolder;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        button#refreshInventory {
+            font-weight: bolder;
+            margin: 0 0 0 50%;
+            width: 50%;
+        }
+
+        button#refreshTransfersPending,
+        button#submitTransferRequest {
+            font-weight: bolder;
+            width: 25%;
+            margin: 0 3px;
+        }
+
+        .d-flex.justify-content-between.mb-2 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input#searchBox1 {
+            flex-grow: 1;
+        }
+
+        .pagination .page-link {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            border-color: var(--secondary-color);
+            border-radius: var(--border-radius);
+        }
+
+        .pagination .page-link:hover {
+            background-color: var(--text-color);
+            color: var(--primary-color);
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--text-color);
+            color: var(--primary-color);
+            border-color: var(--text-color);
+        }
+
+        .table {
+            color: var(--primary-color);
+            border-radius: var(--border-radius);
+        }
+
+        .table th,
+        .table td {
+            background-color: var(--text-color);
+        }
+
+        .table thead th {
+            background-color: var(--secondary-color);
+            color: var (--primary-color);
+        }
+
+        .form-control {
+            border-color: var(--primary-color);
+            border-radius: var(--border-radius);
+        }
+
+        #transfersPendingSection {
+            margin-top: 50px;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spin-logo:hover {
+            animation: spin 1s linear;
+        }
+
+        a {
+            color: var(--secondary-color);
+        }
+
+        .btn-danger:hover {
+            font-weight: bolder;
+            background-color: var(--text-color);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-warning:active {
+            font-weight: bolder;
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: var(--secondary-color) !important;
+        }
+
+        .btn-info:active {
+            font-weight: bolder;
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: var(--secondary-color) !important;
+        }
+
+        .btn-warning#updateModeToggle.update-mode-on {
+            font-weight: bolder;
+            background-color: red;
+            color: white;
+        }
+
+        .btn-success {
+            font-weight: bolder;
+            background-color: green;
+            border-color: green;
+            color: white;
+        }
+
+        .btn-danger {
+            font-weight: bolder;
+            background-color: rgb(187, 0, 0);
+            border-color: rgb(135, 0, 0);
+            color: white;
+        }
+
+        button#refreshInventory {
+            font-weight: bolder;
+            margin-left: 5px;
+        }
+
+        button#refreshWarehouse {
+            font-weight: bolder;
+            height: 38px;
+            width: fit-content;
+            padding: 0 15px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--secondary-color);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: var(--primary-color);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        div#addItemSectionInner {
+            background-color: var(--text-color) !important;
+            padding: 11px;
+            border: 3px var(--secondary-color) solid;
+            border-radius: var(--border-radius);
+        }
+
+        input:checked+.slider {
+            background-color: var(--secondary-color);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        input#searchBox2 {
+            min-width: 0;
+        }
+
+        div.shopStockSearchDiv {
+            width: 100%;
+        }
+
+        #userStatus {
+            display: block;
+            padding: 10px;
+            color: var(--primary-color) !important;
+            background-color: var(--text-color) !important;
+            border-radius: var(--border-radius);
+        }
+
+        #change_pw_link {
+            font-size: 0.7em;
+            color: var(--primary-color) !important;
+            text-decoration: none;
+        }
+
+        #change_pw_link:hover {
+            color: var(--secondary-color) !important;
+        }
+
+        .highlight-ordered td {
+            background-color: var(--third-color) !important;
+            color: var(--primary-color) !important;
+        }
+
+        #searchBox1,
+        #refreshWarehouse {
+            height: 38px;
+        }
+
+        button#downloadStockData {
+            font-weight: bolder;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        button#downloadStockData:hover {
+            font-weight: bolder;
+            background-color: var(--text-color);
+            color: var(--primary-color);
+        }
+
+        div#dlStockSection {
+            margin-top: 50px;
+            background-color: var(--secondary-color);
+            padding: 15px;
+            border-radius: var(--border-radius);
+        }
+
+        #uploadStockDataButton {
+            font-weight: bolder;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        #uploadStockDataButton:hover {
+            font-weight: bolder;
+            background-color: var(--text-color);
+            color: var(--primary-color);
+        }
+
+        /* Remove increment/decrement arrows from number inputs (all browsers) */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+    </style>
+</head>
+
+<body class="container mt-5">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <a class="navbar-brand" href="#">
+            <img src="{% static 'img/logo.webp' %}" alt="Logo" class="spin-logo"
+                style="max-width: 95px; max-height: 95px;">
+        </a>
+        <div class="navbar-collapse collapse justify-content-center">
+            <span class="navbar-text h1">Simpler Stock Management</span>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <span class="navbar-text me-3" id="userStatus"></span>
+                </li>
+                <li class="nav-item">
+                    <a id="authLink" class="btn btn-outline-primary"></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="row">
+        <h2 class="mb-4">Warehouse Stock</h2>
+        <div class="col-12 warehouse-stock mb-4">
+            <div class="d-flex justify-content-between mb-2">
+                <input type="text" id="searchBox1" class="form-control flex-fill"
+                    placeholder="Search Warehouse Items..." onkeyup="search(1, this.value)">
+                <label id="updateModeSwitch" class="toggle-switch ms-2 d-none">
+                    <input type="checkbox" id="updateModeToggle">
+                    <span class="slider"></span>
+                </label>
+                <button id="refreshWarehouse" class="btn btn-info d-none">Refresh Warehouse</button>
+            </div>
+            <div class="alert alert-danger text-center w-100 maintenanceMode" role="alert">
+                Warehouse maintenance is in progress.
+            </div>
+            <table class="table table-bordered whTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(1, 'sku')">SKU</th>
+                        <th onclick="sortTable(1, 'description')">Description</th>
+                        <th onclick="sortTable(1, 'retail_price')">Retail Price</th>
+                        <th onclick="sortTable(1, 'quantity')">Warehouse Qnt</th>
+                        <th id="whXferQnt">Transfer Qnt</th>
+                        <th id="whActions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="itemTable1"></tbody>
+            </table>
+            <div id="paginationControls1" class="pagination-controls"></div>
+        </div>
+        <div class="col-12 shop-stock">
+            <h2>Shop Stock</h2>
+            <div class="d-flex align-items-center mb-2 shopStockSearchDiv">
+                <input type="text" id="searchBox2" class="form-control flex-fill" placeholder="Search Shop Items..."
+                    onkeyup="search(2, this.value)">
+                <button id="refreshInventory" class="btn btn-info">Refresh Inventory</button>
+            </div>
+            <table class="table table-bordered shopStockTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(2, 'item__sku')">SKU</th>
+                        <th onclick="sortTable(2, 'item__description')">Description</th>
+                        <th onclick="sortTable(2, 'item__retail_price')">Retail Price</th>
+                        <th onclick="sortTable(2, 'quantity')">Item Qnt</th>
+                    </tr>
+                </thead>
+                <tbody id="itemTable2"></tbody>
+            </table>
+            <div id="paginationControls2" class="pagination-controls"></div>
+        </div>
+    </div>
+    <div id="addItemSection" class="d-none">
+        <h2>Add Item</h2>
+        <div id="addItemSectionInner">
+            <input type="text" id="sku" placeholder="SKU" class="form-control mb-2">
+            <input type="text" id="description" placeholder="Description" class="form-control mb-2">
+            <input type="number" step="0.01" min="0.00" id="retail_price" placeholder="Retail Price"
+                class="form-control mb-2">
+            <input type="number" min="0" id="quantity" placeholder="Quantity" class="form-control mb-2">
+            <button id="addItem" class="btn btn-primary">Add</button>
+        </div>
+    </div>
+    <div id="transfersPendingSection">
+        <h2>Transfers Pending</h2>
+        <div class="d-flex justify-content-between mb-2">
+            <input type="text" id="searchBox3" class="form-control" placeholder="Search Transfers Pending..."
+                onkeyup="search(3, this.value)">
+            <button id="refreshTransfersPending" class="btn btn-info">Refresh Status</button>
+            <button id="submitTransferRequest" class="btn btn-info d-none">Send Transfer Request</button>
+        </div>
+        <table class="table table-bordered xfersPendingTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(3, 'shop_user__username')">Shop User</th>
+                    <th onclick="sortTable(3, 'item__sku')">SKU</th>
+                    <th onclick="sortTable(3, 'item__description')">Description</th>
+                    <th onclick="sortTable(3, 'quantity')">Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="itemTable3"></tbody>
+        </table>
+        <div id="paginationControls3" class="pagination-controls"></div>
+    </div>
+    <div id="dlStockSection" class="text-center">
+        <div class="d-flex justify-content-center align-items-center mt-3">
+            <input type="file" id="uploadStockData" class="form-control d-none w-25 me-2" accept=".xlsx">
+            <button id="uploadStockDataButton" class="btn btn-info d-none w-25">Upload Stock Data</button>
+            <button id="downloadStockData" class="btn btn-info d-none w-25">Download Stock Data</button>
+        </div>
+    </div>
+    <script>
+        (() => {
+            'use strict';
+
+            // Global variable to hold the edit lock status.
+            window.editLock = false;
+
+            // Global variable for records per page (default fallback)
+            window.recordsPerPage = 25;
+
+            // Fetch app config (records_per_page) from backend
+            const fetchAppConfig = () => {
+                return $.get('/api/app_config/', data => {
+                    if (data.records_per_page) {
+                        window.recordsPerPage = data.records_per_page;
+                    }
+                    // Store allow_upload_deletions in a global variable
+                    window.allowUploadDeletions = !!data.allow_upload_deletions;
+                });
+            };
+
+            // Globals to hold page, sort column & sort order
+            window.currentPageGlobals = [{
+                page: 1,
+                sort: 'last_updated',
+                order: '',
+                search: ''
+            }, {
+                page: 1,
+                sort: 'last_updated',
+                order: '',
+                search: ''
+            }, {
+                page: 1,
+                sort: 'last_updated',
+                order: '',
+                search: ''
+            }];
+
+            // Global cache for transfer quantities.
+            window.cache = {
+                'xfer_qnt': new Map()
+            };
+
+            // Global object to hold active AJAX requests for each table.
+            window.currentFetchRequests = {
+                1: null,
+                2: null,
+                3: null
+            };
+
+            // Set edit lock status on the server.
+            const setEditLockStatus = (status) => {
+                if (window.userGroups && window.userGroups.includes("managers")) {
+                    $.ajax({
+                        url: '/api/set_edit_lock_status/',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        headers: { 'X-CSRFToken': getCSRFToken() },
+                        data: JSON.stringify({ edit_lock_status: status }),
+                        success: response => {
+                            window.editLock = response.edit_lock;
+                            updateUIBasedOnEditLock();
+                            [1, 2, 3].forEach((tn) => {
+                                fetchItems(tn);
+                            });
+                        }
+                    });
+                }
+            };
+
+            // Get the edit lock status from the server.
+            const getEditLockStatus = () => {
+                return new Promise((resolve, reject) => {
+                    $.ajax({
+                        url: '/api/get_edit_lock_status/',
+                        type: 'GET',
+                        success: response => {
+                            window.editLock = response.edit_lock;
+                            updateUIBasedOnEditLock();
+                            resolve();
+                        },
+                        error: xhr => {
+                            console.error("Failed to fetch edit lock status:", xhr.responseText);
+                            reject(xhr);
+                        }
+                    });
+                });
+            };
+
+            // Get CSRF token from cookies.
+            const getCSRFToken = () => {
+                return document.cookie.split('; ')
+                    .find(row => row.startsWith('csrftoken='))?.split('=')[1];
+            };
+
+            // Ensure CSRF token is included in all AJAX requests.
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
+                }
+            });
+
+            // Update global page variables and trigger a new fetch.
+            const updatePageGlobals = (tableNum, page = null, sort = null, order = null, search = null) => {
+                if (page !== null) {
+                    window.currentPageGlobals[tableNum - 1]['page'] = page;
+                }
+                if (sort !== null) {
+                    window.currentPageGlobals[tableNum - 1]['sort'] = sort;
+                }
+                if (order !== null) {
+                    window.currentPageGlobals[tableNum - 1]['order'] = order;
+                }
+                if (search !== null) {
+                    window.currentPageGlobals[tableNum - 1]['search'] = search;
+                }
+                fetchItems(tableNum);
+            };
+
+            // Search function for tables.
+            const search = (tableNum, query) => {
+                updatePageGlobals(tableNum, 1, null, null, query);
+            };
+
+            // Sorting functionality.
+            const sortTable = (tableNum, column) => {
+                const $table = $(`#itemTable${tableNum}`);
+                const currentOrder = $table.data('sortOrder') || 'asc';
+                const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+                $table.data('sortOrder', newOrder).data('sortColumn', column);
+                const searchVal = $(`#searchBox${tableNum}`).val();
+                updatePageGlobals(tableNum, 1, column, newOrder, searchVal);
+            };
+
+            // Update the update mode toggle button state.
+            const setUpdateModeButtonState = () => {
+                $('#updateModeToggle').prop('checked', window.editLock);
+            };
+
+            // Set nested cache map values for transfer quantities.
+            const setXferVals = (shop_user, sku, qty) => {
+                const map = window.cache.xfer_qnt;
+                if (!map.has(shop_user)) {
+                    map.set(shop_user, new Map());
+                }
+                map.get(shop_user).set(sku, qty);
+            };
+
+            // Get nested cache map values for transfer quantities.
+            const getXferVals = (shop_user, sku) => {
+                return window.cache.xfer_qnt.get(shop_user)?.get(sku);
+            };
+
+            // Delete transfer quantity values from cache.
+            const deleteXferVals = (shop_user, sku) => {
+                const map = window.cache.xfer_qnt;
+                if (!map.has(shop_user)) return;
+                const userMap = map.get(shop_user);
+                userMap.delete(sku);
+                if (userMap.size === 0) {
+                    map.delete(shop_user);
+                }
+            };
+
+            // Fetch items via AJAX and populate the corresponding table.
+            const fetchItems = async (tableNum) => {
+                try {
+                    await getEditLockStatus();
+                    let apiUrl = '';
+                    let page = window.currentPageGlobals[tableNum - 1]['page'];
+                    let searchQuery = window.currentPageGlobals[tableNum - 1]['search'];
+                    let sortColumn = window.currentPageGlobals[tableNum - 1]['sort'];
+                    let sortOrder = window.currentPageGlobals[tableNum - 1]['order'];
+                    if (tableNum === 1) {
+                        apiUrl = '/api/items/';
+                    } else if (tableNum === 2) {
+                        apiUrl = '/api/shop_items/';
+                    } else if (tableNum === 3) {
+                        apiUrl = '/api/transfer_items/';
+                        if (window.userGroups && window.userGroups.includes("shop_users")) {
+                            apiUrl += `?shop_user_username=${window.loggedInUsername}`;
+                        }
+                    }
+                    const separator = apiUrl.includes('?') ? '&' : '?';
+                    apiUrl += `${separator}page=${page}&page_size=${window.recordsPerPage}&search=${encodeURIComponent(searchQuery)}`;
+                    if (sortColumn) {
+                        apiUrl += `&ordering=${sortOrder === 'asc' ? '' : '-'}${sortColumn}`;
+                    }
+
+                    // Cancel any existing request for this table.
+                    if (window.currentFetchRequests[tableNum]) {
+                        window.currentFetchRequests[tableNum].abort();
+                    }
+
+                    // Make the AJAX call and store its jqXHR.
+                    const xhr = $.get(apiUrl, data => {
+                        let $tableBody;
+                        if (tableNum === 1) $tableBody = $('#itemTable1');
+                        else if (tableNum === 2) $tableBody = $('#itemTable2');
+                        else if (tableNum === 3) $tableBody = $('#itemTable3');
+                        $tableBody.empty();
+                        data.results.forEach(item => {
+                            let row = '';
+                            if (tableNum === 1) {
+                                const quantityField = (window.userGroups && window.userGroups.includes("managers"))
+                                    ? `<input type="number" min="0" value="${item.quantity}" class="form-control wh_editable-field" data-sku="${item.sku}" data-field="quantity">`
+                                    : item.quantity;
+                                const retailPriceField = (window.userGroups && window.userGroups.includes("managers"))
+                                    ? `<input type="number" min="0" step="0.01" value="${item.retail_price}" class="form-control wh_editable-field" data-sku="${item.sku}" data-field="retail_price">`
+                                    : item.retail_price;
+                                const descriptionField = (window.userGroups && window.userGroups.includes("managers"))
+                                    ? `<input type="text" value="${item.description}" class="form-control wh_editable-field" data-sku="${item.sku}" data-field="description">`
+                                    : item.description;
+                                const transferQuantityField = `<input type="number" min="0" class="form-control xferQntField wh_editable-field" ${window.editLock ? 'disabled' : ''} value="" placeholder="How many units?" data-sku="${item.sku}" data-field="xfer_qnt">`;
+                                row = `
+<tr>
+    <td>${item.sku}</td>
+    <td>${descriptionField}</td>
+    <td>${retailPriceField}</td>
+    <td>${quantityField}</td>
+    ${window.userGroups && window.userGroups.includes("shop_users") ? `<td>${transferQuantityField}</td>` : ''}
+    ${window.userGroups && window.userGroups.includes("managers") ? `<td class="actions"></td>` : ''}
+</tr>`;
+                            } else if (tableNum === 2) {
+                                row = `
+<tr>
+    <td>${item.item.sku}</td>
+    <td>${item.item.description}</td>
+    <td>${parseFloat(item.item.retail_price).toFixed(2)}</td>
+    <td><input type="number" min="0" value="${item.quantity}" class="form-control" id="quantity2-${item.item.sku}" data-shop_user_id="${item.shop_user.username}" disabled></td>
+</tr>`;
+                            } else if (tableNum === 3) {
+                                const highlightClass = item.ordered && window.userGroups && window.userGroups.includes("shop_users") ? 'highlight-ordered' : '';
+                                const shop_user = item.shop_user && item.shop_user.username ? item.shop_user.username : window.loggedInUsername;
+                                setXferVals(shop_user, item.item.sku, item.quantity);
+                                row = `
+<tr class="${highlightClass}" data-ordered="${item.ordered}" data-sku="${item.item.sku}" data-quantity="${item.quantity}">
+    ${window.userGroups && window.userGroups.includes("managers") ? `<td>${shop_user}</td>` : ''}
+    <td>${item.item.sku}</td>
+    <td>${item.item.description}</td>
+    <td>${window.userGroups && window.userGroups.includes("managers") ? `<input class="form-control" type="number" min="0" value="${getXferVals(shop_user, item.item.sku)}" id="quantity3-${item.item.sku}" data-shop_user_id="${item.shop_user.username}">` : getXferVals(shop_user, item.item.sku)}</td>
+    <td class="actions">
+    ${window.userGroups && window.userGroups.includes("managers") ? `<button onclick="completeTransfer('${item.item.sku}', '${shop_user}', 'false')" class="btn btn-info" id="dispatchButton-${item.item.sku}">Dispatch</button>` : ''} 
+    <button ${window.userGroups && !window.userGroups.includes("managers") && item.ordered ? 'disabled' : ''} onclick="completeTransfer('${item.item.sku}', '${shop_user}', 'true')" class="btn btn-danger" id="deleteButton-${item.item.sku}">Cancel</button>
+    </td>
+</tr>`;
+                            }
+                            $tableBody.append(row);
+                            if (tableNum === 1 && window.userGroups && window.userGroups.includes("managers")) {
+                                $tableBody.find('tr:last .actions').append(`
+<button onclick="deleteItem('${item.sku}', 1)" class="btn btn-danger"}>Delete</button>
+`);
+                            }
+                        });
+                        setupPagination(tableNum, data);
+                    });
+
+                    // Store the active request.
+                    window.currentFetchRequests[tableNum] = xhr;
+
+                } catch (error) {
+                    console.error("Error in fetchItems:", error);
+                }
+            };
+
+            // Build and attach pagination controls.
+            const setupPagination = (tn, data) => {
+                let $paginationDiv;
+                if (tn === 1) $paginationDiv = $('#paginationControls1');
+                else if (tn === 2) $paginationDiv = $('#paginationControls2');
+                else if (tn === 3) $paginationDiv = $('#paginationControls3');
+
+                $paginationDiv.empty();
+                let paginationHtml = '<nav aria-label="Page navigation"><ul class="pagination justify-content-center">';
+
+                const currentPage = data.current_page;
+                const totalPages = data.total_pages;
+                const startPage = Math.floor((currentPage - 1) / 5) * 5 + 1;
+                const endPage = Math.min(startPage + 4, totalPages);
+
+                if (currentPage > 5) {
+                    paginationHtml += `<li class="page-item"><a class="page-link" href="#" onclick="updatePageGlobals(${tn}, ${startPage - 5}, null, null, null)">Previous</a></li>`;
+                }
+                for (let i = startPage; i <= endPage; i++) {
+                    paginationHtml += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                      <a class="page-link" href="#" onclick="updatePageGlobals(${tn}, ${i}, null, null, null)">${i}</a>
+                     </li>`;
+                }
+                if (endPage < totalPages) {
+                    paginationHtml += `<li class="page-item"><a class="page-link" href="#" onclick="updatePageGlobals(${tn}, ${startPage + 5}, null, null, null)">Next</a></li>`;
+                }
+                paginationHtml += '</ul></nav>';
+                $paginationDiv.append(paginationHtml);
+            };
+
+            // Add a new item using AJAX POST.
+            const addItem = () => {
+                const retailPrice = $('#retail_price').val();
+                if (!/^\d+(\.\d{1,2})?$/.test(retailPrice)) {
+                    alert('Retail price must be a valid number with up to 2 decimal places.');
+                    return;
+                }
+                const data = {
+                    sku: $('#sku').val(),
+                    description: $('#description').val(),
+                    retail_price: retailPrice,
+                    quantity: $('#quantity').val()
+                };
+                $.ajax({
+                    url: '/api/items/',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: { 'X-CSRFToken': getCSRFToken() },
+                    data: JSON.stringify(data),
+                    success: () => {
+                        fetchItems(1);
+                        $('#sku, #description, #retail_price, #quantity').val('');
+                    },
+                    error: xhr => {
+                        alert(xhr.responseJSON.detail);
+                    }
+                });
+            };
+
+            // Update an item using AJAX PUT.
+            const updateItem = (tableNum, sku, fieldName, value) => {
+                if (tableNum == 1) {
+                    if (fieldName == 'retail_price' && !/^\d+(\.\d{1,2})?$/.test(value)) {
+                        alert('Retail price must be a valid number with up to 2 decimal places.');
+                        return;
+                    }
+                    const data = {
+                        sku: sku,
+                        [fieldName]: value
+                    };
+                    $.ajax({
+                        url: `/api/items/${encodeURIComponent(sku)}/`,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        headers: { 'X-CSRFToken': getCSRFToken() },
+                        data: JSON.stringify(data),
+                        success: () => fetchItems(1),
+                        error: xhr => {
+                            alert(xhr.responseJSON.detail);
+                        }
+                    });
+                }
+            };
+
+            // Delete an item using AJAX DELETE.
+            const deleteItem = (sku, tableNum) => {
+                const apiUrl = tableNum === 1 ? `/api/items/${encodeURIComponent(sku)}/` : `/api/shop_items/${encodeURIComponent(sku)}/`;
+                $.ajax({
+                    url: apiUrl,
+                    type: 'DELETE',
+                    headers: { 'X-CSRFToken': getCSRFToken() },
+                    success: () => fetchItems(tableNum),
+                    error: xhr => {
+                        let msg = 'An error occurred.';
+                        if (xhr.responseJSON && xhr.responseJSON.detail) {
+                            msg = xhr.responseJSON.detail;
+                        } else if (xhr.responseText) {
+                            try {
+                                const data = JSON.parse(xhr.responseText);
+                                if (data.detail) msg = data.detail;
+                            } catch (e) {
+                                // responseText is not JSON, keep default msg
+                            }
+                        }
+                        alert(msg);
+                    }
+                });
+            };
+
+            // Transfer an item using AJAX POST.
+            const transferItem = (sku, xfer_qnt) => {
+                $.ajax({
+                    url: '/api/transfer/',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: { 'X-CSRFToken': getCSRFToken() },
+                    data: JSON.stringify({ sku, transfer_quantity: xfer_qnt }),
+                    success: () => { fetchItems(3); },
+                    error: xhr => {
+                        alert(xhr.responseJSON.detail);
+                        fetchItems(1);
+                    }
+                });
+            };
+
+            // Submit transfer request.
+            const submitTransferRequest = () => {
+                $.ajax({
+                    url: '/api/submit-transfer-request/',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: { 'X-CSRFToken': getCSRFToken() },
+                    data: JSON.stringify(),
+                    success: () => { fetchItems(3); },
+                    error: xhr => alert(xhr.responseJSON.detail)
+                });
+            };
+
+            // Complete or cancel a transfer using AJAX POST.
+            const completeTransfer = (sku, shop_user_id, cancel) => {
+                const quantity = getXferVals(shop_user_id, sku);
+                $.ajax({
+                    url: '/api/complete-transfer/',
+                    type: "POST",
+                    contentType: 'application/json',
+                    headers: { 'X-CSRFToken': getCSRFToken() },
+                    data: JSON.stringify({ sku, shop_user_id, quantity, cancel }),
+                    success: () => { [1, 3].forEach(tn => fetchItems(tn)); },
+                    error: xhr => alert(xhr.responseJSON.detail)
+                });
+                deleteXferVals(shop_user_id, sku);
+            };
+
+            // Download stock data using AJAX POST.
+            const downloadStockData = () => {
+                const url = '/api/export_data/';
+                window.location.href = url;
+            };
+
+            // Handle stock data upload
+            const uploadStockData = () => {
+                const fileInput = document.getElementById('uploadStockData');
+                const file = fileInput.files[0];
+                if (!file) {
+                    alert('Please select a file to upload.');
+                    return;
+                }
+
+                // Check for destructive upload config
+                if (window.allowUploadDeletions) {
+                    if (!confirm("Warning: The system is configured to delete all data from the warehouse and shops that is not included in this upload. This is a destructive action. Is this what you intended?")) {
+                        return;
+                    }
+                }
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                $.ajax({
+                    url: '/api/import_data/',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: { 'X-CSRFToken': getCSRFToken() },
+                    success: (data) => {
+                        // data is the JSON response from the server
+                        let msg = 'Stock data uploaded successfully.';
+                        if (data && data.detail) msg = data.detail;
+                        if (data && Array.isArray(data.skipped_skus) && data.skipped_skus.length) {
+                            msg += '\n\nThe following SKUs had invalid retail_price values and were skipped:\n' + data.skipped_skus.join(', ');
+                        }
+                        alert(msg);
+                        [1, 2].forEach(tn => fetchItems(tn));
+                    },
+                    error: xhr => {
+                        let msg = 'Failed to upload stock data.';
+                        if (xhr.responseJSON && xhr.responseJSON.detail) {
+                            msg = xhr.responseJSON.detail;
+                        } else if (xhr.responseText) {
+                            try {
+                                const data = JSON.parse(xhr.responseText);
+                                if (data.detail) msg = data.detail;
+                            } catch (e) {
+                                // responseText is not JSON, keep default msg
+                            }
+                        }
+                        alert(msg);
+                    }
+                });
+            };
+
+            // Change color of quantity fields when modified.
+            const attachQntChangeColorUpdateListener = () => {
+                [1, 2, 3].forEach(tableNum => {
+                    $(`#itemTable${tableNum}`).on('input', 'input[type="number"]', function () {
+                        $(this).css({
+                            'background-color': getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim(),
+                            'color': getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(),
+                        });
+                    });
+                });
+            };
+
+            // Toggle update mode.
+            const updateModeChangeHandler = () => {
+                let current_lock_status = $('#updateModeToggle').prop('checked');
+                setEditLockStatus(current_lock_status);
+            };
+
+            // Tailor the dashboard view based on user groups.
+            const tailor_dashboard = () => {
+                const groups = window.userGroups;
+                if (groups && groups.includes("managers")) {
+                    setEditLockStatus(false);
+                    $(".shop-stock").hide();
+                    $(".warehouse-stock").addClass("col-md-12").removeClass("col-md-6");
+                    $("#addItemSection, #updateModeSwitch").removeClass("d-none");
+                    $("#downloadStockData, #uploadStockData, #uploadStockDataButton").removeClass("d-none");
+                } else {
+                    $(".shop-stock").show();
+                    if (groups.includes("shop_users")) {
+                        $("th:contains('Shop User')").hide();
+                        $("#itemTable3 tr").each(function () {
+                            $(this).find("td:first").hide();
+                        });
+                        $("#submitTransferRequest").removeClass("d-none");
+                        $("#refreshWarehouse").removeClass("d-none");
+                        $("#downloadStockData").removeClass("d-none");
+                    }
+                }
+                if (!groups.includes("shop_users")) {
+                    $("th#whXferQnt").hide();
+                }
+                if (groups.includes("shop_users")) {
+                    $("th#whActions").hide();
+                }
+            };
+
+            // Check authentication status and update the UI accordingly.
+            const checkAuthStatus = () => {
+                $.ajax({
+                    url: '/api/auth/user/',
+                    method: 'GET',
+                    xhrFields: { withCredentials: true },
+                    success: data => {
+                        if (data.username) {
+                            $("#userStatus").html(`Hello ${data.username}<br/><a id="change_pw_link" href="{% url 'password_change' %}">Change my password</a>`);
+                            window.loggedInUsername = data.username;
+                            window.userGroups = data.groups;
+                            tailor_dashboard();
+                            [1, 2, 3].forEach((tn) => fetchItems(tn));
+                            $("#authLink").text("Logout")
+                                .off("click")
+                                .on("click", event => {
+                                    event.preventDefault();
+                                    $.ajax({
+                                        url: "/accounts/logout/",
+                                        type: "POST",
+                                        headers: { "X-CSRFToken": getCSRFToken() },
+                                        success: () => location.reload(),
+                                        error: (xhr, status, error) => console.error("Logout failed:", xhr.responseText)
+                                    });
+                                });
+                        } else {
+                            $("#userStatus").text("");
+                            $("#authLink").attr("href", "/accounts/login/").text("Login");
+                        }
+                    },
+                    error: (xhr, status, error) => {
+                        console.error("Auth check failed:", xhr.responseText);
+                        $("#userStatus").text("");
+                        $("#authLink").attr("href", "/accounts/login/").text("Login");
+                    }
+                });
+            };
+
+            // Update the UI based on the edit lock status.
+            const updateUIBasedOnEditLock = () => {
+                const isLocked = window.editLock;
+                $('#itemTable1 input, #itemTable1 button').prop('disabled', isLocked);
+                $('#updateModeToggle').prop('checked', isLocked);
+                $('.maintenanceMode').toggleClass('d-none', !isLocked);
+            };
+
+            // Expose functions to global scope.
+            window.sortTable = sortTable;
+            window.fetchItems = fetchItems;
+            window.updateItem = updateItem;
+            window.deleteItem = deleteItem;
+            window.transferItem = transferItem;
+            window.completeTransfer = completeTransfer;
+            window.updateModeChangeHandler = updateModeChangeHandler;
+            window.tailor_dashboard = tailor_dashboard;
+            window.checkAuthStatus = checkAuthStatus;
+            window.updatePageGlobals = updatePageGlobals;
+            window.search = search;
+
+            $(document).on("blur", ".wh_editable-field", function () {
+                var sku = $(this).data("sku");
+                var fieldName = $(this).data("field");
+                var newValue = $(this).val();
+                if (fieldName == 'xfer_qnt') {
+                    if (Number.isInteger(parseInt(newValue), 10)) {
+                        newValue > 0 ? transferItem(sku, newValue) : console.log('Enter more than 0!');
+                    }
+                }
+                else {
+                    updateItem(1, sku, fieldName, newValue);
+                }
+            });
+
+            $(document).on("blur", `input[id^="quantity3-"]`, function () {
+                const id = $(this).attr('id')
+                const sku = id.replace('quantity3-', '')
+                const shopUserID = $(this).data('shop_user_id');
+                setXferVals(shopUserID, sku, $(this).val());
+            });
+
+            $(document).ready(() => {
+                fetchAppConfig().always(() => {
+                    checkAuthStatus();
+                    $('#addItem').click(addItem);
+                    $('#submitTransferRequest').click(submitTransferRequest);
+                    $('#updateModeToggle').change(updateModeChangeHandler);
+                    attachQntChangeColorUpdateListener();
+                    $('#refreshInventory').click(() => [1, 2, 3].forEach(tn => fetchItems(tn)));
+                    $('#refreshTransfersPending').click(() => [1, 2, 3].forEach(tn => fetchItems(tn)));
+                    $('#refreshWarehouse').click(() => fetchItems(1));
+                    $('#downloadStockData').click(() => downloadStockData());
+                    $('#uploadStockDataButton').click(uploadStockData);
+                });
+            });
+        })();
+    </script>
+    <footer class="text-center mt-5 footer">
+        <small>Simpler Stock Management v5.2.127-beta. (c)2025 <a href="https://github.com/consciousuniverse"
+                target="_blank">Dan Bright</a>. License GPLv3.</small>
+    </footer>
+</body>
+
+</html>

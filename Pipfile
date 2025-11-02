@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+djangorestframework = "*"
+django = "*"
+dotenv = "*"
+gunicorn = "*"
+gevent = "*"
+django-axes = {extras = ["ipware"], version = "*"}
+django-anymail = {extras = ["sparkpost"], version = "*"}
+openpyxl = "*"
+pytz = "*"
+pandas = "*"
+natsort = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.13"
